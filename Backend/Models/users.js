@@ -1,15 +1,18 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-    firstName: { type: String, required: true, unique: true },
-    lastName: { type: String, required: true, unique: true },
+const userSchema = new mongoose.Schema(
+  {
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    profilePicture: { type: String, default: null,},
+    profilePicture: { type: String, default: null },
+
     age: {
       type: Number,
       min: [13, 'Must be at least 13 years old'],
       max: [120, 'Age must be realistic'],
+      required: true,
     },
     gender: {
       type: String,
@@ -17,20 +20,20 @@ const userSchema = new mongoose.Schema({
         values: ['Male', 'Female', 'Other'],
         message: 'Gender must be Male, Female, or Other',
       },
+      required: true,
     },
     height: {
-      // in cm
       type: Number,
       min: [100, 'Height must be at least 100 cm'],
       max: [250, 'Height must be less than 250 cm'],
+      required: true,
     },
     weight: {
-      // in kg (current weight)
       type: Number,
       min: [30, 'Weight must be at least 30 kg'],
+      required: true,
     },
 
-    // Fitness Information
     fitnessGoals: {
       type: [String],
       enum: {
@@ -47,8 +50,15 @@ const userSchema = new mongoose.Schema({
       },
       default: 'Beginner',
     },
-    timestamps: true,
-});
+   // OTP fields
+    otp: { type: String, default: null },
+    otpExpiresAt: { type: Date, default: null },
+    isVerified: { type: Boolean, default: false },
+  },
+  {
+    timestamps: true, // ✅ Correct place for timestamps
+  }
+);
 
-module.exports = mongoose.model('User', userSchema);
-module.exports.userSchema = userSchema;
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+export default User;
